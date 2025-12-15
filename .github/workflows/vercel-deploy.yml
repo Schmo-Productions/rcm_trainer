@@ -1,0 +1,19 @@
+name: Trigger Vercel Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'rcmtrainer-web/**'  # Only trigger if files in rcmtrainer-web change
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Deploy
+        run: |
+          curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
+        env:
+          VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+
