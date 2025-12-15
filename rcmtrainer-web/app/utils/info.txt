@@ -1,0 +1,1 @@
+pure logic that gets reused. these are functions instead of entire pieces of website

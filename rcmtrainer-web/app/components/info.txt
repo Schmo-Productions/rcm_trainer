@@ -1,0 +1,1 @@
+reusable pieces of code. So like a modal or table that woud be used accross the site
