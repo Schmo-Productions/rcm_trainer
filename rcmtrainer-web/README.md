@@ -42,7 +42,7 @@ When adding features to this repo, it is required that contributors make these c
 Create a new branch
 1. git checkout -b "your_branch_name"
 
-Make your changes in the branch then merging from main 
+Make your changes in the branch then merge from main 
 1. ⁠git add . 
 2. git commit -m “\[Version Number\] - message”
 3. git fetch origin 
