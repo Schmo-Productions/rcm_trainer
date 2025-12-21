@@ -1,13 +1,14 @@
 "use client";
 
 // Import React hooks for state management and navigation
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 // Import Firebase authentication function and auth instance
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../lib/firebase";
+import { useAuth } from "../contexts/AuthContext";
 
 /**
  * Type definition for the signup form data
@@ -67,6 +68,9 @@ const validatePassword = (password: string): { isValid: boolean; error: string }
 export default function SignupPage() {
   // Router hook for programmatic navigation
   const router = useRouter();
+  
+  // Get auth state from context
+  const { loading: authLoading, isAuthenticated } = useAuth();
 
   // State for form input values
   const [email, setEmail] = useState<string>("");
@@ -82,6 +86,17 @@ export default function SignupPage() {
   // State to toggle password visibility for both password fields
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+
+  /**
+   * Redirect effect - if user is already authenticated, redirect to home
+   * Prevents authenticated users from seeing the signup form
+   */
+  useEffect(() => {
+    // Only redirect after auth state has been determined
+    if (!authLoading && isAuthenticated) {
+      router.push("/home");
+    }
+  }, [authLoading, isAuthenticated, router]);
 
   /**
    * Handles form submission
@@ -168,6 +183,25 @@ export default function SignupPage() {
       setIsLoading(false);
     }
   };
+
+  // Show loading state while checking if user is already authenticated
+  if (authLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+        <div className="text-zinc-600 dark:text-zinc-400">Loading...</div>
+      </div>
+    );
+  }
+
+  // Don't render signup form if user is already authenticated
+  // (redirect will happen via useEffect)
+  if (isAuthenticated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+        <div className="text-zinc-600 dark:text-zinc-400">Redirecting...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">

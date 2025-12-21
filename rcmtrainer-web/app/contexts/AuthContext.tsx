@@ -52,6 +52,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * - Initial auth state check (on page load)
    */
   useEffect(() => {
+    // Track if this is the initial check to prevent race conditions
+    let isInitialCheck = true;
+
     // Subscribe to auth state changes
     // onAuthStateChanged fires immediately with current user (or null)
     // and then fires again whenever auth state changes
@@ -60,9 +63,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Update the user state in context
       // currentUser will be null if logged out, or User object if logged in
       setUser(currentUser);
+      
       // Set loading to false after initial auth state is determined
-      // This happens on the first call (page load)
-      setLoading(false);
+      // Only set loading to false on the first call (initial check)
+      // This prevents the loading state from flickering on subsequent auth changes
+      if (isInitialCheck) {
+        setLoading(false);
+        isInitialCheck = false;
+      }
     });
 
     // Cleanup: unsubscribe when component unmounts

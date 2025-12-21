@@ -2,7 +2,7 @@
 // This file should contain your Firebase config and auth setup
 
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
+import { getAuth, Auth, setPersistence, browserLocalPersistence } from 'firebase/auth';
 
 // Your Firebase config object from Firebase Console
 // TODO: Replace these values with your actual Firebase project config
@@ -26,6 +26,13 @@ if (getApps().length === 0) {
 
 // Initialize Auth
 export const auth: Auth = getAuth(app);
+
+// Set auth persistence to local storage explicitly
+// This ensures authentication state persists across page refreshes
+// and browser sessions until explicitly signed out
+setPersistence(auth, browserLocalPersistence).catch((error) => {
+  console.error("Error setting auth persistence:", error);
+});
 
 export default app;
 
